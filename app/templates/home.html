@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Home • Gmail Audio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+          Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f7f7fb;
+        padding: 24px;
+      }
+      .card {
+        background: #fff;
+        padding: 28px 32px;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        max-width: 720px;
+        width: 100%;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0;
+      }
+      .muted {
+        color: #555;
+      }
+      a.logout {
+        color: #c00;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .player {
+        margin-top: 10px;
+        border: 1px solid #eee;
+        padding: 16px;
+        border-radius: 12px;
+        background: #fafafa;
+      }
+      .note {
+        font-size: 12px;
+        color: #777;
+        margin-top: 8px;
+      }
+      code {
+        background: #f0f0f5;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="row">
+        <h1>Hi, {{ user.get('name') or user.get('email') }}!</h1>
+        <a class="logout" href="{{ url_for('logout') }}">Log out</a>
+      </div>
+      <p class="muted">You’re signed in with Gmail. Enjoy today's news. 🎧</p>
+
+      <div class="player">
+        <audio controls autoplay style="width: 100%">
+          <source
+            src="{{ url_for('static', filename=audio_filename) }}"
+            type="audio/mpeg"
+          />
+          Your browser doesn’t support the audio tag.
+        </audio>
+        <div class="note">
+          If autoplay is blocked by the browser, press play.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
