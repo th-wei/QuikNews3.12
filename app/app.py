@@ -72,7 +72,7 @@ def flow_for_request():
     client_config = {
         "web": {
             "client_id": GOOGLE_CLIENT_ID,
-            "project_id": "metisainewssummarizer-467302",
+            "project_id": "quiknews-470023",
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "client_secret": GOOGLE_CLIENT_SECRET,
@@ -157,10 +157,14 @@ def home():
 
     audio_filename = "audio/podcast.mp3"
     transcript_filepath = "app/static/transcripts/transcript.txt"
+    audio_filepath = "app/static/audio/podcast.mp3"
     if podcast.is_file_empty(transcript_filepath):
         service = get_gmail_service()
         content = access.create_podcast_content(service)
         podcast.generate_pod(content)
+    if podcast.is_file_empty(audio_filepath):
+        service = get_gmail_service()
+        podcast.generate_audio(transcript_filepath)
 
     return render_template("home.html", 
                            user=session["user"], 

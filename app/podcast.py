@@ -47,8 +47,7 @@ def generate_transcript(content):
 def generate_audio(filepath):
         generate_podcast(transcript_file=filepath, 
                         tts_model='gemini',
-                        conversation_config=podcast_config,
-                        output_format='mp3')
+                        conversation_config=podcast_config)
 
 def generate_pod(content):
         generate_podcast(text=content,
@@ -60,6 +59,7 @@ def generate_pod(content):
 
 # TEST            
 if __name__ == "__main__":
-    content = access.create_podcast_content()
+    service = access.gmail_authenticate()
+    content = access.create_podcast_content(service)
     path = generate_transcript(content)
     generate_audio(path)
