@@ -187,8 +187,12 @@ def __static_debug():
         "sample_files": files[:50],
     }
 
+# # LOCALLY TEST
+# if __name__ == "__main__":
+#     # Ensure /static exists
+#     pathlib.Path("app/static").mkdir(exist_ok=True)
 
-if __name__ == "__main__":
-    # Ensure /static exists
-    pathlib.Path("app/static").mkdir(exist_ok=True)
-    app.run(host="127.0.0.1", ssl_context="adhoc", port=5000, debug=True)
+#     # WSGI Server
+#     # app.run(host="127.0.0.1", ssl_context="adhoc", port=5000, debug=True)
+
+#     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

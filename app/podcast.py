@@ -1,6 +1,5 @@
 import access
 import os
-from playsound import playsound
 
 from podcastfy.client import generate_podcast, process_content
 
@@ -53,7 +52,6 @@ def generate_pod(content):
         generate_podcast(text=content,
                         llm_model_name="gemini-2.5-pro", 
                         tts_model='gemini',
-                        longform=True,
                         conversation_config=podcast_config)
 
 

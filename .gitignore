@@ -3,7 +3,12 @@
 .env
 __pycache__
 credentials.json
+credentialsdesktop.json
 token.json
+.dockerignore
+docker-compose.yml
+Dockerfile
+output.txt
 
 # ignore venv
 env
