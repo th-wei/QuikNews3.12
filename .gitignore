@@ -9,6 +9,7 @@ token.json
 docker-compose.yml
 Dockerfile
 output.txt
+.DS_Store
 
 # ignore venv
 env
