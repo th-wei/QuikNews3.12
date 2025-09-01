@@ -10,6 +10,8 @@ docker-compose.yml
 Dockerfile
 output.txt
 .DS_Store
+.gcloudignore
+app.yaml
 
 # ignore venv
 env

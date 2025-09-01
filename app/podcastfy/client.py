@@ -10,12 +10,12 @@ import os
 import uuid
 import typer
 import yaml
-from podcastfy.content_parser.content_extractor import ContentExtractor
-from podcastfy.content_generator import ContentGenerator
-from podcastfy.text_to_speech import TextToSpeech
-from podcastfy.utils.config import Config, load_config
-from podcastfy.utils.config_conversation import load_conversation_config
-from podcastfy.utils.logger import setup_logger
+from ..podcastfy.content_parser.content_extractor import ContentExtractor
+from ..podcastfy.content_generator import ContentGenerator
+from ..podcastfy.text_to_speech import TextToSpeech
+from ..podcastfy.utils.config import Config, load_config
+from ..podcastfy.utils.config_conversation import load_conversation_config
+from ..podcastfy.utils.logger import setup_logger
 from typing import List, Optional, Dict, Any
 import copy
 

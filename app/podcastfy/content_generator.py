@@ -17,8 +17,8 @@ from langchain_community.llms.llamafile import Llamafile
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain import hub
-from podcastfy.utils.config_conversation import load_conversation_config
-from podcastfy.utils.config import load_config
+from ..podcastfy.utils.config_conversation import load_conversation_config
+from ..podcastfy.utils.config import load_config
 import logging
 from langchain.prompts import HumanMessagePromptTemplate
 from abc import ABC, abstractmethod

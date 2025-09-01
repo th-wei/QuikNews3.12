@@ -8,7 +8,7 @@ to clean and format the extracted text.
 
 from youtube_transcript_api import YouTubeTranscriptApi
 import logging
-from podcastfy.utils.config import load_config
+from ..utils.config import load_config
 
 logger = logging.getLogger(__name__)
 

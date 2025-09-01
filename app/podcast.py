@@ -1,7 +1,7 @@
-import access
+from . import access
 import os
 
-from podcastfy.client import generate_podcast, process_content
+from .podcastfy.client import generate_podcast, process_content
 
 
 # Define a custom conversation config for a tech debate podcast

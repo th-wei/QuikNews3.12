@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 from .youtube_transcriber import YouTubeTranscriber
 from .website_extractor import WebsiteExtractor
 from .pdf_extractor import PDFExtractor
-from podcastfy.utils.config import load_config
+from ..utils.config import load_config
 
 logger = logging.getLogger(__name__)
 
