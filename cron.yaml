@@ -1,0 +1,5 @@
+cron:
+  - description: Daily news digest for /home
+    url: /cron/kick-ai
+    schedule: every day 10:00
+    timezone: America/New_York
