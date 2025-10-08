@@ -1,4 +1,4 @@
-from . import access
+from os import path
 import os
 
 from .podcastfy.client import generate_podcast, process_content
@@ -6,15 +6,11 @@ from .podcastfy.client import generate_podcast, process_content
 
 # Define a custom conversation config for a tech debate podcast
 podcast_config = {
-    'conversation_style': ['Engaging', 'Fast-paced', 'Enthusiastic', 'Educational'], 
-    'roles_person1': ['Economist, Thought Leader, Businessman, Tech Enthusiast', "Main Summarizer"], 
-    'roles_person2': 'None', 
-    'dialogue_structure': ['Topic Introduction', 'Summary of Key Points', 'Discussions'], 
-    'podcast_name': 'Daily Metis News', 
-    'podcast_tagline': 'Keep up with Metis on tech and business', 
-    'output_language': 'English', 
-    'user_instructions': ['Summarizes news by breaking it down into key points', 'No Filler'],  
-    'creativity': 0.75
+    'roles_person1': ['Economist', 'Thought Leader', 'Businessman', 'Technologist'], 
+    'roles_person2': ['Economist', 'Thought Leader', 'Businessman', 'Technologist'], 
+    'dialogue_structure': ['Topic Introduction', 'Summary of Key Points', 'Discussions/Conclusions'],
+    'user_instructions': ['Summarizes information by breaking it down into themes and key points', 'No Filler'],  
+    'creativity': 0.5
 }
 
 def is_file_empty(file_path):
@@ -57,7 +53,19 @@ def generate_pod(content):
 
 # TEST            
 if __name__ == "__main__":
-    service = access.gmail_authenticate()
-    content = access.create_podcast_content(service)
-    path = generate_transcript(content)
-    generate_audio(path)
+    # service = access.gmail_authenticate()
+    # content = access.create_podcast_content(service)
+
+    # if content is not None:
+    #     path = generate_transcript(content)
+    #     generate_audio(path)
+
+    transcript_filepath = "tmp/transcript.txt"
+    audio_filepath = "tmp/podcast.mp3"
+    root = path.dirname(path.abspath(__file__))
+    print(root)
+    if is_file_empty(transcript_filepath):
+        print("yes, transcript is empty")
+    if is_file_empty(audio_filepath):
+        print("yes, audio is empty")
+

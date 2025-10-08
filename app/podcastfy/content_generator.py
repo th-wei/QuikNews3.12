@@ -902,7 +902,7 @@ class ContentGenerator:
                 with open(output_filepath, "w") as file:
                     file.write(self.response)
                 logger.info(f"Response content saved to {output_filepath}")
-                print(f"Transcript saved to {output_filepath}")
+                print(f"Transcript saved to {os.path.abspath(output_filepath)}")
 
             return self.response
             

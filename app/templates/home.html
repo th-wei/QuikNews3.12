@@ -72,10 +72,7 @@
 
       <div class="player">
         <audio controls autoplay style="width: 100%">
-          <source
-            src="{{ url_for('static', filename=audio_filename) }}"
-            type="audio/mpeg"
-          />
+          <source src="{{ audio_filename }}" type="audio/mpeg" />
           Your browser doesn’t support the audio tag.
         </audio>
         <div class="note">

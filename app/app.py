@@ -13,6 +13,7 @@ import pathlib
 import requests
 from . import access  # Ensure access.py is imported to use its functions
 from . import podcast  # Ensure podcast.py is imported to use its functions
+from . import storagemanagement  # Ensure storage.py is imported to use its functions
 
 load_dotenv()
 
@@ -81,37 +82,27 @@ def _store_google_creds(creds):
     }
 
 def _load_google_creds(offline=False):
-    creds = None
-    if offline:
-        client = datastore.Client(project=PROJECT_ID)
-        query = client.query(kind="Email")
-        query.keys_only()
-        for e in query.fetch():
-            creds = load_credentials(e.key.name)
-            print("Loaded creds from Datastore: ", e.key.name)
-    else:
-        data = session.get("google_creds")
-        if not data:
-            return None
-        creds = UserCredentials(
-            token=data["token"],
-            refresh_token=data.get("refresh_token"),
-            token_uri=data["token_uri"],
-            client_id=data["client_id"],
-            client_secret=data["client_secret"],
-            scopes=data["scopes"],
-        )
+    data = session.get("google_creds")
+    if not data:
+        return None
+    creds = UserCredentials(
+        token=data["token"],
+        refresh_token=data.get("refresh_token"),
+        token_uri=data["token_uri"],
+        client_id=data["client_id"],
+        client_secret=data["client_secret"],
+        scopes=data["scopes"],
+    )
 
-        # Refresh if needed
-        if creds.expired and creds.refresh_token:
-            creds.refresh(google_requests.Request())
-            _store_google_creds(creds)  # persist updated token/expiry
-            save_credentials(session["user"]["email"], creds)  # persist in Firestore
+    # Refresh if needed
+    if creds.expired and creds.refresh_token:
+        creds.refresh(google_requests.Request())
+        _store_google_creds(creds)  # persist updated token/expiry
+        save_credentials(session["user"]["email"], creds)  # persist in Firestore
 
     return creds
 
-def get_gmail_service(offline=False):
-    creds = _load_google_creds(offline)
+def get_gmail_service(creds=None):
     if not creds:
         return None
     return build("gmail", "v1", credentials=creds)
@@ -222,34 +213,45 @@ def newsletter_digest():
     # Only allow App Engine Cron
     if not request.headers.get("X-Appengine-Queuename"):
         abort(403)
-    service = get_gmail_service(True)
-    if service is None:
-        raise RuntimeError("Gmail service not initialized (check refresh token / client credentials).")
-    content = access.create_podcast_content(service)
-    if content is None:
-        return "No new emails found", 200
-    podcast.generate_pod(content)
-    return "News digest created", 200
+
+    client = datastore.Client(project=PROJECT_ID)
+    query = client.query(kind="Email")
+    query.keys_only()
+    for e in query.fetch():
+        creds = load_credentials(e.key.name)
+        email = e.key.name
+        print("Loaded creds from Datastore: ", email)
+
+        service = get_gmail_service(creds)
+        if service is None:
+            raise RuntimeError("Gmail service not initialized (check refresh token / client credentials).")
+        content = access.create_podcast_content(service)
+        if content is None:
+            print("No new emails found", 200)
+        podcast.generate_pod(content)
+        email_prefix = email.split('@')[0]
+        storagemanagement.upload_blob("newsletter_content", "/tmp/podcast.mp3", f"static/{email_prefix}_podcast.mp3")
+        print("200: News digest created")
 
 @app.route("/home")
 def home():
     if not logged_in():
         return redirect(url_for("index"))
 
-    audio_filename = "audio/podcast.mp3"
-    transcript_filepath = "app/static/transcripts/transcript.txt"
-    audio_filepath = "app/static/audio/podcast.mp3"
-    if podcast.is_file_empty(transcript_filepath):
-        service = get_gmail_service()
-        content = access.create_podcast_content(service)
-        podcast.generate_pod(content)
-    if podcast.is_file_empty(audio_filepath):
-        service = get_gmail_service()
-        podcast.generate_audio(transcript_filepath)
+    # transcript_filepath = "tmp/transcript.txt"
+    # audio_filepath = "tmp/podcast.mp3"
+    email_prefix = session["user"]["email"].split("@")[0]
+    audio_url = f"https://storage.googleapis.com/newsletter_content/static/{email_prefix}_podcast.mp3"
 
-    return render_template("home.html", 
-                           user=session["user"], 
-                           audio_filename=audio_filename)
+    # if podcast.is_file_empty(transcript_filepath):
+    #     service = get_gmail_service()
+    #     content = access.create_podcast_content(service)
+    #     podcast.generate_pod(content)
+    # if podcast.is_file_empty(audio_filepath):
+    #     service = get_gmail_service()
+    #     podcast.generate_audio(transcript_filepath)
+
+    return render_template("home.html", user=session["user"], audio_filename=audio_url)
 
 @app.route("/logout")
 def logout():
@@ -267,13 +269,3 @@ def __static_debug():
         "has_podcast": (p / "audio" / "podcast.mp3").exists(),
         "sample_files": files[:50],
     }
-
-# LOCALLY TEST
-if __name__ == "__main__":
-    # Ensure /static exists
-    pathlib.Path("app/static").mkdir(exist_ok=True)
-
-    # WSGI Server
-    # app.run(host="0.0.0.0", ssl_context="adhoc", port=8080, debug=True)
-
-    # app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

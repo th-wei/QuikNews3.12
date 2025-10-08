@@ -117,18 +117,24 @@ def create_podcast_content(service):
     today_start = datetime.now(pytz.timezone('US/Eastern')).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
     print("Today Start: " + str(today_start))
     unix_todaystart = int(time.mktime(today_start.timetuple()))
-    query = f'from:@axios.com after:{unix_todaystart}'
+
     print("Getting News After: " + str(today_start))
+    senders = ["@axios.com", "crew@morningbrew.com"]
+    query = " OR ".join([f'from:{sender}' for sender in senders])
+    query = f"({query}) after:{unix_todaystart}"
+    print("Using Query: " + query)
     emails = get_emails(service, query)
 
     daily_content = ""
 
     if emails:
         news = get_content(service, emails)
-        count = 1
+        count = 0
         for content in news:
             daily_content = daily_content + f"NEWSLETTER {count}\n" + content['body']
+            print(f"title: {content['subject']}")
             count += 1
+        print(f"Found {count} newsletters.")
         return daily_content
     else:
         print("No morning news.")
@@ -138,4 +144,4 @@ def create_podcast_content(service):
 if __name__ == "__main__":
     service = gmail_authenticate()
     newsletter_content = create_podcast_content(service)
-    print(newsletter_content)
+    # print(newsletter_content)
